@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>旅途印记 - 我的旅行日记</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://a.amap.com/jsapi_demos/static/demo-center/css/demo-center.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- 顶部导航 -->
+    <header class="header">
+        <div class="header-inner">
+            <h1 class="logo">🌍 旅途印记</h1>
+            <nav class="nav">
+                <button class="nav-btn active" data-view="timeline">📅 行程时间线</button>
+                <button class="nav-btn" data-view="map">🗺️ 地图总览</button>
+                <button class="nav-btn" data-view="gallery">📸 相册</button>
+            </nav>
+            <div class="header-actions">
+                <button class="btn-icon" id="btnExport" title="导出数据">📤</button>
+                <button class="btn-icon" id="btnImport" title="导入数据">📥</button>
+                <input type="file" id="importFile" accept=".json" style="display:none">
+                <button class="btn-primary" id="btnNewTrip">✈️ 新建旅程</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- 旅程信息头部 -->
+    <section class="trip-hero" id="tripHero">
+        <div class="trip-hero-overlay"></div>
+        <div class="trip-hero-content">
+            <h2 class="trip-title" id="tripTitle">点击"新建旅程"开始你的旅行记录</h2>
+            <p class="trip-subtitle" id="tripSubtitle">记录每一个精彩瞬间</p>
+            <div class="trip-stats" id="tripStats"></div>
+        </div>
+    </section>
+
+    <!-- 主内容区 -->
+    <main class="main-content">
+        <!-- 时间线视图 -->
+        <section class="view-panel active" id="viewTimeline">
+            <div class="day-nav" id="dayNav"></div>
+            <div class="day-content" id="dayContent">
+                <div class="empty-state">
+                    <div class="empty-icon">🗺️</div>
+                    <h3>还没有旅程数据</h3>
+                    <p>点击右上角"新建旅程"开始记录你的旅行吧！</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 地图视图 -->
+        <section class="view-panel" id="viewMap">
+            <div class="map-container">
+                <div id="mapContainer" style="width:100%;height:100%"></div>
+            </div>
+            <div class="map-sidebar" id="mapSidebar"></div>
+        </section>
+
+        <!-- 相册视图 -->
+        <section class="view-panel" id="viewGallery">
+            <div class="gallery-grid" id="galleryGrid"></div>
+        </section>
+    </main>
+
+    <!-- 新建旅程弹窗 -->
+    <div class="modal-overlay" id="modalTrip">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>✈️ 新建旅程</h3>
+                <button class="modal-close" id="modalTripClose">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>旅程名称</label>
+                    <input type="text" id="tripName" placeholder="例如：2026 日本关西之旅">
+                </div>
+                <div class="form-group">
+                    <label>旅程简介</label>
+                    <textarea id="tripDesc" placeholder="用一段话描述这次旅行" rows="3"></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>出发日期</label>
+                        <input type="date" id="tripStart">
+                    </div>
+                    <div class="form-group">
+                        <label>返程日期</label>
+                        <input type="date" id="tripEnd">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>封面图片（可选）</label>
+                    <input type="file" id="tripCover" accept="image/*">
+                    <div class="cover-preview" id="coverPreview"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="modalTripCancel">取消</button>
+                <button class="btn-primary" id="modalTripSave">创建旅程</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 添加日记弹窗 -->
+    <div class="modal-overlay" id="modalEntry">
+        <div class="modal modal-large">
+            <div class="modal-header">
+                <h3 id="entryModalTitle">📝 添加日记</h3>
+                <button class="modal-close" id="modalEntryClose">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>日期</label>
+                        <input type="date" id="entryDate">
+                    </div>
+                    <div class="form-group">
+                        <label>标题</label>
+                        <input type="text" id="entryTitle" placeholder="例如：初见大阪">
+                    </div>
+                </div>
+
+                <!-- 行程安排 -->
+                <div class="form-group">
+                    <label>📋 当日行程安排</label>
+                    <div class="itinerary-list" id="itineraryList">
+                        <div class="itinerary-item">
+                            <input type="time" class="itin-time" value="09:00">
+                            <input type="text" class="itin-activity" placeholder="活动描述">
+                            <button class="btn-remove-itin" title="删除">&times;</button>
+                        </div>
+                    </div>
+                    <button class="btn-add-line" id="btnAddItin">+ 添加行程项</button>
+                </div>
+
+                <!-- 随想 -->
+                <div class="form-group">
+                    <label>💭 当日随想</label>
+                    <textarea id="entryThoughts" rows="5" placeholder="记录今天的心情、感悟、趣事..."></textarea>
+                </div>
+
+                <!-- 地点标注 -->
+                <div class="form-group">
+                    <label>📍 地点标注（高德地图）</label>
+                    <div class="location-search">
+                        <input type="text" id="locationSearch" placeholder="搜索地点名称或地址">
+                        <button class="btn-secondary" id="btnSearchLocation">🔍 搜索</button>
+                    </div>
+                    <div class="location-results" id="locationResults"></div>
+                    <div class="selected-locations" id="selectedLocations"></div>
+                </div>
+
+                <!-- 照片上传 -->
+                <div class="form-group">
+                    <label>📸 照片记录</label>
+                    <div class="photo-upload-area" id="photoUploadArea">
+                        <div class="upload-placeholder">
+                            <span>📷</span>
+                            <p>点击或拖拽上传照片</p>
+                        </div>
+                        <input type="file" id="photoInput" accept="image/*" multiple style="display:none">
+                    </div>
+                    <div class="photo-preview-grid" id="photoPreviewGrid"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-danger" id="btnDeleteEntry" style="display:none">🗑️ 删除</button>
+                <button class="btn-secondary" id="modalEntryCancel">取消</button>
+                <button class="btn-primary" id="modalEntrySave">保存日记</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 查看照片弹窗 -->
+    <div class="modal-overlay" id="modalPhoto">
+        <div class="photo-viewer">
+            <button class="photo-close" id="modalPhotoClose">&times;</button>
+            <button class="photo-prev" id="photoPrev">‹</button>
+            <button class="photo-next" id="photoNext">›</button>
+            <img id="photoViewerImg" src="" alt="">
+            <div class="photo-caption" id="photoCaption"></div>
+        </div>
+    </div>
+
+    <script src="https://webapi.amap.com/maps?v=2.0&key=014cd546dd2ffb48464919b31e61668d&plugin=AMap.PlaceSearch,AMap.Geocoder"></script>
+    <script src="app.js"></script>
+</body>
+</html>
