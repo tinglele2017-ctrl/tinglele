@@ -62,7 +62,19 @@
             <div class="map-container">
                 <div id="mapContainer" style="width:100%;height:100%"></div>
             </div>
-            <div class="map-sidebar" id="mapSidebar"></div>
+            <div class="map-sidebar" id="mapSidebar">
+                <div class="map-search-box">
+                    <input type="text" id="mapSearchInput" placeholder="🔍 搜索地点名称或地址...">
+                    <div class="map-search-results" id="mapSearchResults"></div>
+                </div>
+                <div class="map-add-bar">
+                    <label>标注到：</label>
+                    <select id="mapAddDay"></select>
+                    <button class="btn-primary btn-sm" id="btnMapAdd" disabled>+ 添加</button>
+                </div>
+                <h3>📍 行程地点</h3>
+                <div id="mapPointList"></div>
+            </div>
         </section>
 
         <!-- 相册视图 -->
