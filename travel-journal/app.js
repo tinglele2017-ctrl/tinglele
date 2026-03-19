@@ -5,6 +5,7 @@
     const DB_KEY = 'travel_journal_data';
     let data = loadData();
     let currentTripId = null;
+    let editingTripId = null; // null=新建, 非null=编辑旅程
     let currentDayIndex = 0;
     let editingEntryIndex = -1;
     let tempPhotos = [];
@@ -65,6 +66,16 @@
             switchView('trips');
             render();
         });
+        // Hero 操作按钮
+        $('#btnEditTrip').addEventListener('click', () => openTripEditModal());
+        $('#btnAddDayHero').addEventListener('click', () => openEntryModal(-1));
+        // 悬浮按钮
+        $('#fabAddDay').addEventListener('click', () => openEntryModal(-1));
+        $('#fabEditDay').addEventListener('click', () => {
+            const t = currentTrip();
+            if (!t || !t.entries || !t.entries.length) { openEntryModal(-1); return; }
+            openEntryModal(currentDayIndex);
+        });
     }
     function switchView(name) {
         $$('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -90,6 +101,8 @@
         $('#tripSubtitle').textContent = '每一次出发，都值得被铭记';
         $('#tripStats').innerHTML = '';
         $('#btnBackToList').style.display = 'none';
+        $('#tripHeroActions').style.display = 'none';
+        $('#fabGroup').style.display = 'none';
         // 清空日内容
         $('#dayNav').innerHTML = '';
         $('#dayContent').innerHTML = '';
@@ -154,6 +167,8 @@
         const t = currentTrip();
         if (!t) return;
         $('#btnBackToList').style.display = '';
+        $('#tripHeroActions').style.display = 'flex';
+        $('#fabGroup').style.display = 'flex';
         if (t.coverImg) {
             $('#tripHero').classList.add('has-cover');
             $('#tripHero').style.backgroundImage = `url(${t.coverImg})`;
@@ -205,7 +220,7 @@
         if (!t) return;
         const entries = t.entries || [];
         if (!entries.length) {
-            $('#dayContent').innerHTML = `<div class="empty-state"><div class="empty-icon">📝</div><h3>还没有日记</h3><p>点击"添加一天"开始记录</p></div>`;
+            $('#dayContent').innerHTML = `<div class="empty-state"><div class="empty-icon">📝</div><h3>还没有日记</h3><p>开始记录你的旅途吧</p><br><button class="btn-primary" onclick="document.querySelector('#btnAddDay').click()">📝 添加第一天</button></div>`;
             return;
         }
         const e = entries[currentDayIndex];
@@ -242,7 +257,11 @@
             html += `</div></div></div>`;
         }
         if (!e.itinerary?.length && !e.thoughts && !e.locations?.length && !e.photos?.length) {
-            html += `<div class="card day-full"><div class="card-body" style="text-align:center;padding:40px;color:var(--text-light);"><p>今天还没有内容，点击"编辑今日"开始记录 ✏️</p></div></div>`;
+            html += `<div class="card day-full"><div class="card-body" style="text-align:center;padding:48px 24px;color:var(--text-light);">
+                <div style="font-size:2.5rem;margin-bottom:12px;">✍️</div>
+                <p style="margin-bottom:16px;">今天还没有内容</p>
+                <button class="btn-primary" onclick="document.querySelector('#btnEditDay').click()">✏️ 开始记录</button>
+            </div></div>`;
         }
 
         $('#dayContent').innerHTML = html;
@@ -270,6 +289,23 @@
         $('#tripCover').addEventListener('change', handleCoverPreview);
         $('#modalTripSave').addEventListener('click', saveTrip);
     }
+    function openTripEditModal() {
+        const t = currentTrip();
+        if (!t) return;
+        editingTripId = t.id;
+        $('#tripName').value = t.name || '';
+        $('#tripDesc').value = t.desc || '';
+        $('#tripStart').value = t.startDate || '';
+        $('#tripEnd').value = t.endDate || '';
+        if (t.coverImg) {
+            $('#coverPreview').innerHTML = `<img src="${t.coverImg}">`;
+        } else {
+            $('#coverPreview').innerHTML = '';
+        }
+        // 更新弹窗标题
+        $('.modal-header h3', $('#modalTrip')).textContent = '⚙️ 编辑旅程';
+        openModal('modalTrip');
+    }
     function handleCoverPreview() {
         const file = $('#tripCover').files[0];
         if (!file) return;
@@ -281,30 +317,48 @@
         const name = $('#tripName').value.trim();
         if (!name) { alert('请输入旅程名称'); return; }
         const coverFile = $('#tripCover').files[0];
+
         const doSave = (coverImg) => {
-            const trip = {
-                id: 'trip_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
-                name,
-                desc: $('#tripDesc').value.trim(),
-                startDate: $('#tripStart').value,
-                endDate: $('#tripEnd').value,
-                coverImg: coverImg || null,
-                entries: [],
-                createdAt: new Date().toISOString()
-            };
-            data.trips.push(trip);
-            saveData();
-            currentTripId = trip.id;
-            currentDayIndex = 0;
-            closeModal('modalTrip');
+            if (editingTripId) {
+                // 编辑模式
+                const t = data.trips.find(t => t.id === editingTripId);
+                if (!t) return;
+                t.name = name;
+                t.desc = $('#tripDesc').value.trim();
+                t.startDate = $('#tripStart').value;
+                t.endDate = $('#tripEnd').value;
+                if (coverImg !== undefined) t.coverImg = coverImg;
+                saveData();
+                editingTripId = null;
+                closeModal('modalTrip');
+                render();
+            } else {
+                // 新建模式
+                const trip = {
+                    id: 'trip_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+                    name,
+                    desc: $('#tripDesc').value.trim(),
+                    startDate: $('#tripStart').value,
+                    endDate: $('#tripEnd').value,
+                    coverImg: coverImg || null,
+                    entries: [],
+                    createdAt: new Date().toISOString()
+                };
+                data.trips.push(trip);
+                saveData();
+                currentTripId = trip.id;
+                currentDayIndex = 0;
+                closeModal('modalTrip');
+                switchView('timeline');
+                render();
+            }
             // 清空表单
             $('#tripName').value = '';
             $('#tripDesc').value = '';
             $('#tripStart').value = '';
             $('#tripEnd').value = '';
             $('#coverPreview').innerHTML = '';
-            switchView('timeline');
-            render();
+            $('.modal-header h3', $('#modalTrip')).textContent = '✈️ 新建旅程';
         };
         if (coverFile) {
             compressImage(coverFile, 1200, .8, doSave);
