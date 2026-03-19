@@ -44,6 +44,13 @@
 
     <!-- 主内容区 -->
     <main class="main-content">
+        <!-- 旅程操作栏 -->
+        <div class="trip-toolbar" id="tripToolbar" style="display:none;">
+            <button class="toolbar-btn" id="tbEditTrip">⚙️ 编辑旅程</button>
+            <button class="toolbar-btn primary" id="tbAddDay">📝 添加一天</button>
+            <button class="toolbar-btn" id="tbDeleteTrip" style="margin-left:auto;color:#dc2626;">🗑️ 删除旅程</button>
+        </div>
+
         <!-- 旅程清单视图 -->
         <section class="view-panel active" id="viewTrips">
             <div class="trip-list" id="tripList"></div>
