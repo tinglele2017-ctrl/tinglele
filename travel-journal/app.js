@@ -69,6 +69,19 @@
         // Hero 操作按钮
         $('#btnEditTrip').addEventListener('click', () => openTripEditModal());
         $('#btnAddDayHero').addEventListener('click', () => openEntryModal(-1));
+        // 操作栏按钮
+        $('#tbEditTrip').addEventListener('click', () => openTripEditModal());
+        $('#tbAddDay').addEventListener('click', () => openEntryModal(-1));
+        $('#tbDeleteTrip').addEventListener('click', () => {
+            const t = currentTrip();
+            if (!t) return;
+            if (!confirm(`确定删除旅程「${t.name}」？此操作不可恢复。`)) return;
+            data.trips = data.trips.filter(tr => tr.id !== t.id);
+            saveData();
+            currentTripId = null;
+            switchView('trips');
+            render();
+        });
         // 悬浮按钮
         $('#fabAddDay').addEventListener('click', () => openEntryModal(-1));
         $('#fabEditDay').addEventListener('click', () => {
@@ -103,6 +116,7 @@
         $('#btnBackToList').style.display = 'none';
         $('#tripHeroActions').style.display = 'none';
         $('#fabGroup').style.display = 'none';
+        $('#tripToolbar').style.display = 'none';
         // 清空日内容
         $('#dayNav').innerHTML = '';
         $('#dayContent').innerHTML = '';
@@ -169,6 +183,7 @@
         $('#btnBackToList').style.display = '';
         $('#tripHeroActions').style.display = 'flex';
         $('#fabGroup').style.display = 'flex';
+        $('#tripToolbar').style.display = 'flex';
         if (t.coverImg) {
             $('#tripHero').classList.add('has-cover');
             $('#tripHero').style.backgroundImage = `url(${t.coverImg})`;
