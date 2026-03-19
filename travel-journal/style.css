@@ -17,14 +17,13 @@
     --radius: 12px;
     --radius-sm: 8px;
     --transition: .25s cubic-bezier(.4,0,.2,1);
-    --font-serif: 'Noto Serif SC', serif;
-    --font-sans: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font: 'Microsoft YaHei', '微软雅黑', 'PingFang SC', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
-    font-family: var(--font-sans);
+    font-family: var(--font);
     background: var(--bg);
     color: var(--text);
     line-height: 1.6;
@@ -56,7 +55,7 @@ body {
     gap: 24px;
 }
 .logo {
-    font-family: var(--font-serif);
+    font-family: var(--font);
     font-size: 1.4rem;
     font-weight: 700;
     color: var(--primary);
@@ -77,7 +76,7 @@ body {
     cursor: pointer;
     color: var(--text-light);
     transition: var(--transition);
-    font-family: var(--font-sans);
+    font-family: var(--font);
 }
 .nav-btn:hover { background: #f1f5f9; color: var(--text); }
 .nav-btn.active { background: var(--primary); color: #fff; }
@@ -110,7 +109,7 @@ body {
     font-weight: 500;
     cursor: pointer;
     transition: var(--transition);
-    font-family: var(--font-sans);
+    font-family: var(--font);
     white-space: nowrap;
 }
 .btn-primary:hover { background: var(--primary-dark); transform: translateY(-1px); box-shadow: var(--shadow); }
@@ -123,7 +122,7 @@ body {
     font-size: .9rem;
     cursor: pointer;
     transition: var(--transition);
-    font-family: var(--font-sans);
+    font-family: var(--font);
 }
 .btn-secondary:hover { border-color: var(--primary); color: var(--primary); }
 .btn-danger {
@@ -135,7 +134,7 @@ body {
     font-size: .9rem;
     cursor: pointer;
     transition: var(--transition);
-    font-family: var(--font-sans);
+    font-family: var(--font);
     margin-right: auto;
 }
 .btn-danger:hover { background: #fee2e2; }
@@ -143,16 +142,17 @@ body {
 /* ===== Hero 旅程头部 ===== */
 .trip-hero {
     position: relative;
-    height: 260px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    background-size: cover;
-    background-position: center;
+    height: 280px;
+    background: linear-gradient(135deg, rgba(37,99,235,.85), rgba(124,58,237,.85)),
+                url('https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=1600&q=80') center/cover;
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: hidden;
 }
-.trip-hero.has-cover { background-image: var(--cover-img); }
+.trip-hero.has-cover {
+    background: linear-gradient(135deg, rgba(0,0,0,.3), rgba(0,0,0,.5)), var(--cover-img) center/cover;
+}
 .trip-hero-overlay {
     position: absolute;
     inset: 0;
@@ -165,7 +165,7 @@ body {
     padding: 24px;
 }
 .trip-title {
-    font-family: var(--font-serif);
+    font-family: var(--font);
     font-size: 2.2rem;
     font-weight: 700;
     margin-bottom: 8px;
@@ -337,7 +337,7 @@ body {
 
 /* ===== 随想卡片 ===== */
 .thoughts-content {
-    font-family: var(--font-serif);
+    font-family: var(--font);
     font-size: 1.05rem;
     line-height: 1.9;
     color: var(--text);
@@ -583,7 +583,7 @@ body {
     border: 1px solid var(--border);
     border-radius: var(--radius-sm);
     font-size: .9rem;
-    font-family: var(--font-sans);
+    font-family: var(--font);
     transition: var(--transition);
     background: var(--bg);
 }
@@ -641,7 +641,7 @@ body {
     cursor: pointer;
     font-size: .85rem;
     transition: var(--transition);
-    font-family: var(--font-sans);
+    font-family: var(--font);
     margin-top: 4px;
 }
 .btn-add-line:hover { border-color: var(--primary); color: var(--primary); background: #eff6ff; }
@@ -821,7 +821,7 @@ body {
     border-radius: var(--radius-sm);
     cursor: pointer;
     transition: var(--transition);
-    font-family: var(--font-sans);
+    font-family: var(--font);
 }
 .btn-edit-day:hover { border-color: var(--primary); color: var(--primary); }
 
@@ -843,4 +843,103 @@ body {
     .form-row { grid-template-columns: 1fr; }
     .photo-prev { left: 8px; }
     .photo-next { right: 8px; }
+    .trip-list { grid-template-columns: 1fr; }
 }
+
+/* ===== 旅程清单 ===== */
+.trip-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    margin-bottom: 24px;
+}
+.trip-card {
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    cursor: pointer;
+    transition: var(--transition);
+    position: relative;
+}
+.trip-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-3px); }
+.trip-card-cover {
+    height: 160px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    background-size: cover;
+    background-position: center;
+    position: relative;
+}
+.trip-card-cover.has-img { background-image: var(--card-cover); }
+.trip-card-cover::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background: linear-gradient(transparent, rgba(0,0,0,.4));
+}
+.trip-card-body { padding: 16px 20px; }
+.trip-card-name { font-size: 1.1rem; font-weight: 600; margin-bottom: 4px; }
+.trip-card-desc { font-size: .85rem; color: var(--text-light); margin-bottom: 8px;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.trip-card-meta { display: flex; gap: 16px; font-size: .8rem; color: var(--text-lighter); }
+.trip-card-actions {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    display: flex;
+    gap: 4px;
+    opacity: 0;
+    transition: var(--transition);
+}
+.trip-card:hover .trip-card-actions { opacity: 1; }
+.trip-card-action {
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: rgba(255,255,255,.9);
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: .85rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+    box-shadow: 0 1px 4px rgba(0,0,0,.15);
+}
+.trip-card-action:hover { background: #fff; transform: scale(1.1); }
+.trip-card-action.delete { color: #dc2626; }
+.trip-list-add {
+    background: var(--bg-card);
+    border: 2px dashed var(--border);
+    border-radius: var(--radius);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--transition);
+    min-height: 240px;
+    color: var(--text-light);
+}
+.trip-list-add:hover { border-color: var(--primary); color: var(--primary); background: #f8faff; }
+.trip-list-add span { font-size: 2.5rem; margin-bottom: 8px; }
+.trip-list-add p { font-size: .95rem; }
+.back-to-list {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    background: rgba(255,255,255,.15);
+    border: 1px solid rgba(255,255,255,.3);
+    border-radius: var(--radius-sm);
+    color: #fff;
+    cursor: pointer;
+    font-size: .85rem;
+    transition: var(--transition);
+    font-family: var(--font);
+    margin-bottom: 16px;
+}
+.back-to-list:hover { background: rgba(255,255,255,.25); }
