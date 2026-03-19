@@ -234,14 +234,22 @@
         const t = currentTrip();
         if (!t) return;
         const entries = t.entries || [];
+
+        // 操作栏 - 始终显示
+        let toolbar = `<div class="trip-toolbar" style="display:flex;gap:10px;padding:12px 0;margin-bottom:16px;border-bottom:1px solid #e2e8f0;align-items:center;">
+            <button class="toolbar-btn" style="padding:8px 18px;border:1px solid #e2e8f0;background:#fff;border-radius:8px;font-size:.9rem;cursor:pointer;font-family:var(--font);" onclick="document.querySelector('#tbEditTrip').click()">⚙️ 编辑旅程</button>
+            <button class="toolbar-btn" style="padding:8px 18px;border:1px solid #2563eb;background:#2563eb;color:#fff;border-radius:8px;font-size:.9rem;cursor:pointer;font-family:var(--font);" onclick="document.querySelector('#tbAddDay').click()">📝 添加一天</button>
+            <button class="toolbar-btn" style="padding:8px 18px;border:1px solid #e2e8f0;background:#fff;border-radius:8px;font-size:.9rem;cursor:pointer;font-family:var(--font);margin-left:auto;color:#dc2626;" onclick="document.querySelector('#tbDeleteTrip').click()">🗑️ 删除旅程</button>
+        </div>`;
+
         if (!entries.length) {
-            $('#dayContent').innerHTML = `<div class="empty-state"><div class="empty-icon">📝</div><h3>还没有日记</h3><p>开始记录你的旅途吧</p><br><button class="btn-primary" onclick="document.querySelector('#btnAddDay').click()">📝 添加第一天</button></div>`;
+            $('#dayContent').innerHTML = toolbar + `<div class="empty-state"><div class="empty-icon">📝</div><h3>还没有日记</h3><p>开始记录你的旅途吧</p><br><button class="btn-primary" onclick="document.querySelector('#btnAddDay').click()">📝 添加第一天</button></div>`;
             return;
         }
         const e = entries[currentDayIndex];
         if (!e) return;
 
-        let html = '';
+        let html = toolbar;
         html += `<div class="day-full" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
             <h2 style="font-family:var(--font);font-size:1.4rem;">📅 Day ${currentDayIndex + 1}${e.title ? ' · ' + e.title : ''}</h2>
             <button class="btn-edit-day" id="btnEditDay">✏️ 编辑今日</button>
