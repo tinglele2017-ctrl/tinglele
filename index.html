@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>成长记忆 - 宝贝成长相册</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- 头部标题 -->
+        <header class="header">
+            <h1 class="title">成长记忆</h1>
+            <p class="subtitle">记录宝贝每一个珍贵瞬间</p>
+        </header>
+
+        <!-- 时间轴区域 -->
+        <div class="timeline-container">
+            <div class="timeline" id="timeline">
+                <!-- 时间轴节点会动态生成 -->
+            </div>
+        </div>
+
+        <!-- 图片展示区域 -->
+        <div class="gallery-container" id="galleryContainer">
+            <div class="empty-state" id="emptyState">
+                <div class="empty-icon">📸</div>
+                <p>选择左侧年龄节点，开始添加宝贝的成长照片吧</p>
+            </div>
+            <div class="photo-grid" id="photoGrid"></div>
+        </div>
+
+        <!-- 添加照片按钮 -->
+        <button class="add-photo-btn" id="addPhotoBtn" style="display: none;">
+            <span>+</span> 添加照片
+        </button>
+
+        <!-- 上传模态框 -->
+        <div class="modal" id="uploadModal">
+            <div class="modal-content">
+                <h2>添加新照片</h2>
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-icon">🖼️</div>
+                    <p>点击或拖拽图片到此处上传</p>
+                    <input type="file" id="fileInput" accept="image/*" multiple hidden>
+                </div>
+                <div class="form-group">
+                    <label>照片描述</label>
+                    <input type="text" id="photoDesc" placeholder="记录这个美好的瞬间...">
+                </div>
+                <div class="modal-buttons">
+                    <button class="btn btn-cancel" id="cancelUpload">取消</button>
+                    <button class="btn btn-primary" id="confirmUpload">上传</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 图片查看器模态框 -->
+        <div class="viewer-modal" id="viewerModal">
+            <div class="viewer-backdrop"></div>
+            <div class="viewer-content">
+                <button class="viewer-close" id="closeViewer">&times;</button>
+                <img class="viewer-image" id="viewerImage" src="" alt="">
+                <div class="viewer-info">
+                    <p class="viewer-desc" id="viewerDesc"></p>
+                    <p class="viewer-date" id="viewerDate"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>Made with ❤️ 珍惜每一段成长</p>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
