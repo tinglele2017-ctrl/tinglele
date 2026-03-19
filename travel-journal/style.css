@@ -964,6 +964,30 @@ body {
 }
 .btn-hero:hover { background: rgba(255,255,255,.35); }
 
+/* ===== 旅程操作栏 ===== */
+.trip-toolbar {
+    display: flex;
+    gap: 10px;
+    padding: 12px 0;
+    margin-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+    align-items: center;
+}
+.toolbar-btn {
+    padding: 8px 18px;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    border-radius: var(--radius-sm);
+    font-size: .9rem;
+    cursor: pointer;
+    transition: var(--transition);
+    font-family: var(--font);
+    white-space: nowrap;
+}
+.toolbar-btn:hover { border-color: var(--primary); color: var(--primary); }
+.toolbar-btn.primary { background: var(--primary); color: #fff; border-color: var(--primary); }
+.toolbar-btn.primary:hover { background: var(--primary-dark); }
+
 /* ===== 悬浮操作按钮 ===== */
 .fab {
     position: fixed;
