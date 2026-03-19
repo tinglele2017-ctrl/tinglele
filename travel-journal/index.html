@@ -6,7 +6,6 @@
     <title>旅途印记 - 我的旅行日记</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://a.amap.com/jsapi_demos/static/demo-center/css/demo-center.css">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <!-- 顶部导航 -->
@@ -14,8 +13,9 @@
         <div class="header-inner">
             <h1 class="logo">🌍 旅途印记</h1>
             <nav class="nav">
-                <button class="nav-btn active" data-view="timeline">📅 行程时间线</button>
-                <button class="nav-btn" data-view="map">🗺️ 地图总览</button>
+                <button class="nav-btn active" data-view="trips">🗺️ 旅程清单</button>
+                <button class="nav-btn" data-view="timeline">📅 行程时间线</button>
+                <button class="nav-btn" data-view="map">📍 地图总览</button>
                 <button class="nav-btn" data-view="gallery">📸 相册</button>
             </nav>
             <div class="header-actions">
@@ -31,14 +31,20 @@
     <section class="trip-hero" id="tripHero">
         <div class="trip-hero-overlay"></div>
         <div class="trip-hero-content">
-            <h2 class="trip-title" id="tripTitle">点击"新建旅程"开始你的旅行记录</h2>
-            <p class="trip-subtitle" id="tripSubtitle">记录每一个精彩瞬间</p>
+            <button class="back-to-list" id="btnBackToList" style="display:none;">← 返回旅程清单</button>
+            <h2 class="trip-title" id="tripTitle">旅途印记 - 你的旅行日记</h2>
+            <p class="trip-subtitle" id="tripSubtitle">选择一个旅程开始记录，或创建新的旅程</p>
             <div class="trip-stats" id="tripStats"></div>
         </div>
     </section>
 
     <!-- 主内容区 -->
     <main class="main-content">
+        <!-- 旅程清单视图 -->
+        <section class="view-panel active" id="viewTrips">
+            <div class="trip-list" id="tripList"></div>
+        </section>
+
         <!-- 时间线视图 -->
         <section class="view-panel active" id="viewTimeline">
             <div class="day-nav" id="dayNav"></div>
