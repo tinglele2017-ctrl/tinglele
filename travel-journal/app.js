@@ -488,18 +488,110 @@
     }
 
     // ===== 地图 =====
+    let mapSearchResult = null; // 当前搜索选中的地点
+
     function initMap() {
         if (typeof AMap === 'undefined') return;
         if (map) { refreshMapMarkers(); return; }
         map = new AMap.Map('mapContainer', { zoom: 5, center: [116.397, 39.908], viewMode: '2D' });
         refreshMapMarkers();
+        bindMapSearch();
     }
+
+    function bindMapSearch() {
+        const input = $('#mapSearchInput');
+        const results = $('#mapSearchResults');
+        const btnAdd = $('#btnMapAdd');
+        const daySelect = $('#mapAddDay');
+
+        // 填充日期选择器
+        populateMapDaySelect();
+
+        // 搜索
+        let searchTimer = null;
+        input.addEventListener('input', () => {
+            clearTimeout(searchTimer);
+            const keyword = input.value.trim();
+            if (!keyword) { results.classList.remove('active'); mapSearchResult = null; btnAdd.disabled = true; return; }
+            searchTimer = setTimeout(() => doMapSearch(keyword), 400);
+        });
+        input.addEventListener('keypress', e => { if (e.key === 'Enter') doMapSearch(input.value.trim()); });
+
+        // 添加按钮
+        btnAdd.addEventListener('click', () => {
+            if (!mapSearchResult) return;
+            const t = currentTrip();
+            if (!t) return;
+            const dayIdx = parseInt(daySelect.value);
+            if (isNaN(dayIdx) || dayIdx < 0) { alert('请先添加日记天数'); return; }
+            if (!t.entries[dayIdx].locations) t.entries[dayIdx].locations = [];
+            t.entries[dayIdx].locations.push({ ...mapSearchResult });
+            saveData();
+            // 清空搜索
+            input.value = '';
+            results.classList.remove('active');
+            mapSearchResult = null;
+            btnAdd.disabled = true;
+            refreshMapMarkers();
+        });
+    }
+
+    function populateMapDaySelect() {
+        const t = currentTrip();
+        const select = $('#mapAddDay');
+        if (!t || !t.entries || !t.entries.length) {
+            select.innerHTML = '<option value="-1">暂无日记</option>';
+            return;
+        }
+        select.innerHTML = t.entries.map((e, i) => {
+            const label = `Day ${i + 1}${e.title ? ' · ' + e.title : ''}`;
+            return `<option value="${i}">${label}</option>`;
+        }).join('');
+        // 默认选中当前天
+        select.value = currentDayIndex;
+    }
+
+    function doMapSearch(keyword) {
+        if (!keyword || typeof AMap === 'undefined') return;
+        const results = $('#mapSearchResults');
+        AMap.plugin(['AMap.PlaceSearch'], () => {
+            const ps = new AMap.PlaceSearch({ pageSize: 10 });
+            ps.search(keyword, (status, result) => {
+                if (status === 'complete' && result.poiList && result.poiList.pois.length) {
+                    results.innerHTML = '';
+                    result.poiList.pois.forEach(poi => {
+                        const div = document.createElement('div');
+                        div.className = 'loc-result-item';
+                        div.innerHTML = `<div class="loc-result-name">${poi.name}</div><div class="loc-result-addr">${poi.address || ''}</div>`;
+                        div.addEventListener('click', () => {
+                            mapSearchResult = { name: poi.name, address: poi.address || '', lng: poi.location.lng, lat: poi.location.lat };
+                            // 地图定位
+                            map.setCenter([poi.location.lng, poi.location.lat]);
+                            map.setZoom(15);
+                            results.classList.remove('active');
+                            // 高亮搜索框
+                            $('#mapSearchInput').value = poi.name;
+                            $('#btnMapAdd').disabled = false;
+                        });
+                        results.appendChild(div);
+                    });
+                    results.classList.add('active');
+                } else {
+                    results.innerHTML = '<div class="loc-result-item" style="color:var(--text-light)">未找到结果</div>';
+                    results.classList.add('active');
+                }
+            });
+        });
+    }
+
     function refreshMapMarkers() {
         if (!map) return;
         mapMarkers.forEach(m => map.remove(m));
         mapMarkers = [];
-        const sidebar = $('#mapSidebar');
-        sidebar.innerHTML = '<h3>📍 行程地点</h3>';
+        populateMapDaySelect(); // 刷新日期下拉
+
+        const pointList = $('#mapPointList');
+        pointList.innerHTML = '';
         const t = currentTrip();
         if (!t || !t.entries) return;
         const allLocs = [];
@@ -507,8 +599,8 @@
             if (!entry.locations) return;
             entry.locations.forEach(loc => allLocs.push({ ...loc, dayIndex: di, date: entry.date, title: entry.title }));
         });
-        if (!allLocs.length) { sidebar.innerHTML += '<p style="color:var(--text-light);font-size:.9rem;">还没有标注地点</p>'; return; }
-        const colors = ['#2563eb', '#dc2626', '#16a34a', '#f59e0b', '#8b5cf6', '#ec4899', '#06b6d4', '#84cc16'];
+        if (!allLocs.length) { pointList.innerHTML = '<p style="color:var(--text-light);font-size:.9rem;">搜索地点并添加标注吧 ↑</p>'; return; }
+        const colors = ['#2563eb', '#0ea5e9', '#16a34a', '#f59e0b', '#8b5cf6', '#ec4899', '#06b6d4', '#84cc16'];
         allLocs.forEach(loc => {
             const color = colors[loc.dayIndex % colors.length];
             const marker = new AMap.Marker({
@@ -526,7 +618,7 @@
                 map.setCenter([loc.lng, loc.lat]);
                 map.setZoom(15);
             });
-            sidebar.appendChild(div);
+            pointList.appendChild(div);
         });
         if (allLocs.length > 1) {
             const bounds = new AMap.Bounds(
