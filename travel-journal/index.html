@@ -35,6 +35,10 @@
             <h2 class="trip-title" id="tripTitle">旅途印记 - 你的旅行日记</h2>
             <p class="trip-subtitle" id="tripSubtitle">选择一个旅程开始记录，或创建新的旅程</p>
             <div class="trip-stats" id="tripStats"></div>
+            <div class="trip-hero-actions" id="tripHeroActions" style="display:none;">
+                <button class="btn-hero" id="btnEditTrip">⚙️ 编辑旅程</button>
+                <button class="btn-hero" id="btnAddDayHero">📝 记录今天</button>
+            </div>
         </div>
     </section>
 
@@ -205,5 +209,11 @@
 
     <script src="https://webapi.amap.com/maps?v=2.0&key=014cd546dd2ffb48464919b31e61668d&plugin=AMap.PlaceSearch,AMap.Geocoder"></script>
     <script src="app.js?v=3"></script>
+
+    <!-- 悬浮操作按钮 -->
+    <div class="fab" id="fabGroup" style="display:none;">
+        <button class="fab-btn secondary" id="fabEditDay" title="编辑今日日记">✏️</button>
+        <button class="fab-btn" id="fabAddDay" title="添加新一天">📝</button>
+    </div>
 </body>
 </html>
