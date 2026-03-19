@@ -107,10 +107,9 @@ class GrowthAlbum {
         Object.keys(this.data.ages).sort((a, b) => a - b).forEach((age) => {
             const photoCount = this.data.ages[age].photos.length;
             const item = document.createElement('div');
-            item.className = 'timeline-item';
+            item.className = 'age-item';
             item.innerHTML = `
-                <div class="age-label">${age} 岁</div>
-                <div class="photo-count">${photoCount} 张照片</div>
+                <div class="age-label">${age} 岁 <span class="photo-count">${photoCount} 张</span></div>
             `;
             item.addEventListener('click', () => {
                 this.selectAge(age);
@@ -132,7 +131,7 @@ class GrowthAlbum {
         this.currentAge = age;
 
         // 更新选中状态
-        document.querySelectorAll('.timeline-item').forEach((item, index) => {
+        document.querySelectorAll('.age-item').forEach((item, index) => {
             if (index === parseInt(age)) {
                 item.classList.add('active');
             } else {
@@ -140,12 +139,16 @@ class GrowthAlbum {
             }
         });
 
+        // 更新标题
+        document.getElementById('currentAgeTitle').textContent = `${age} 岁`;
+        const totalPhotos = this.data.ages[age].photos.length;
+        document.getElementById('photoCountInfo').textContent = `${totalPhotos} 张照片`;
+
         // 渲染照片
         this.renderPhotos();
 
         // 显示添加按钮
         document.getElementById('addPhotoBtn').style.display = 'flex';
-        document.getElementById('addPhotoBtn').querySelector('span').textContent = '+';
     }
 
     // 渲染照片

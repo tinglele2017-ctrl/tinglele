@@ -8,50 +8,66 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
-        <!-- 头部标题 -->
-        <header class="header">
-            <h1 class="title">成长记忆</h1>
-            <p class="subtitle">记录宝贝每一个珍贵瞬间</p>
-        </header>
-
-        <!-- 时间轴区域 -->
-        <div class="timeline-container">
-            <div class="timeline" id="timeline">
-                <!-- 时间轴节点会动态生成 -->
+    <div class="app-container">
+        <!-- 左侧边栏 - 年龄时间树 -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1 class="title">成长记忆</h1>
+                <p class="subtitle">宝贝成长时间树</p>
             </div>
-        </div>
-
-        <!-- 图片展示区域 -->
-        <div class="gallery-container" id="galleryContainer">
-            <div class="empty-state" id="emptyState">
-                <div class="empty-icon">📸</div>
-                <p>选择左侧年龄节点，开始添加宝贝的成长照片吧</p>
+            <div class="age-tree" id="timeline">
+                <!-- 年龄节点会动态生成 -->
             </div>
-            <div class="photo-grid" id="photoGrid"></div>
-        </div>
+            <div class="sidebar-footer">
+                <p>💗 每一岁都值得珍藏</p>
+            </div>
+        </aside>
+
+        <!-- 右侧主内容区 - 照片画廊 -->
+        <main class="main-content">
+            <div class="content-header">
+                <h2 class="current-age-title" id="currentAgeTitle">选择年龄开始</h2>
+                <p class="photo-count-info" id="photoCountInfo">还没有照片</p>
+            </div>
+            
+            <div class="gallery-container" id="galleryContainer">
+                <div class="empty-state" id="emptyState">
+                    <div class="empty-icon">👶</div>
+                    <h3>开始记录成长吧</h3>
+                    <p>选择左侧年龄，点击右下角 + 号添加宝贝照片</p>
+                </div>
+                <div class="photo-grid" id="photoGrid"></div>
+            </div>
+        </main>
 
         <!-- 添加照片按钮 -->
         <button class="add-photo-btn" id="addPhotoBtn" style="display: none;">
-            <span>+</span> 添加照片
+            <span>+</span>
         </button>
 
         <!-- 上传模态框 -->
         <div class="modal" id="uploadModal">
             <div class="modal-content">
-                <h2>添加新照片</h2>
-                <div class="upload-area" id="uploadArea">
-                    <div class="upload-icon">🖼️</div>
-                    <p>点击或拖拽图片到此处上传</p>
-                    <input type="file" id="fileInput" accept="image/*" multiple hidden>
+                <div class="modal-header">
+                    <h2>添加新照片</h2>
+                    <button class="modal-close" id="cancelUpload">&times;</button>
                 </div>
-                <div class="form-group">
-                    <label>照片描述</label>
-                    <input type="text" id="photoDesc" placeholder="记录这个美好的瞬间...">
+                <div class="modal-body">
+                    <div class="upload-area" id="uploadArea">
+                        <div class="upload-icon">🖼️</div>
+                        <p class="upload-title">点击或拖拽图片到此处</p>
+                        <p class="upload-hint">支持多张图片同时上传</p>
+                        <input type="file" id="fileInput" accept="image/*" multiple hidden>
+                    </div>
+                    <div class="form-group">
+                        <label>照片描述</label>
+                        <input type="text" id="photoDesc" placeholder="记录这个美好的瞬间...">
+                    </div>
                 </div>
-                <div class="modal-buttons">
-                    <button class="btn btn-cancel" id="cancelUpload">取消</button>
-                    <button class="btn btn-primary" id="confirmUpload">上传</button>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" id="confirmUpload">
+                        <span>✓</span> 确认上传
+                    </button>
                 </div>
             </div>
         </div>
@@ -69,10 +85,6 @@
             </div>
         </div>
     </div>
-
-    <footer class="footer">
-        <p>Made with ❤️ 珍惜每一段成长</p>
-    </footer>
 
     <script src="app.js"></script>
 </body>
