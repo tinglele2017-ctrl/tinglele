@@ -142,13 +142,12 @@ body {
 /* ===== Hero 旅程头部 ===== */
 .trip-hero {
     position: relative;
-    height: 280px;
+    min-height: 280px;
     background: linear-gradient(135deg, rgba(37,99,235,.85), rgba(14,165,233,.85)),
                 url('https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=1600&q=80') center/cover;
     display: flex;
     align-items: center;
     justify-content: center;
-    overflow: hidden;
 }
 .trip-hero.has-cover {
     background: linear-gradient(135deg, rgba(0,0,0,.3), rgba(0,0,0,.5)), var(--cover-img) center/cover;
@@ -837,7 +836,7 @@ body {
     .logo { font-size: 1.1rem; }
     .nav { display: none; }
     .trip-title { font-size: 1.5rem; }
-    .trip-hero { height: 200px; }
+    .trip-hero { min-height: 200px; }
     .main-content { padding: 16px; }
     .gallery-grid { column-count: 2; }
     .form-row { grid-template-columns: 1fr; }
